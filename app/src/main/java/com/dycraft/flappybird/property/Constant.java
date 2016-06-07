@@ -1,4 +1,4 @@
-package com.dycraft.flappybird.config;
+package com.dycraft.flappybird.property;
 
 /**
  * Created by Admin on 2016/6/5.

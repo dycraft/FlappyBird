@@ -2,11 +2,12 @@ package com.dycraft.flappybird.module;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
-import com.dycraft.flappybird.config.Config;
-import com.dycraft.flappybird.config.Constant;
+import com.dycraft.flappybird.property.Config;
+import com.dycraft.flappybird.property.Constant;
+import com.dycraft.flappybird.property.Status;
 import com.dycraft.flappybird.util.AtlasFactory;
-import com.dycraft.flappybird.util.RandomFromTime;
 
 import java.util.Random;
 
@@ -23,14 +24,17 @@ public class Pipe extends BaseWidget
     //桶的高度可变化的范围
 
     private Bitmap pipe_up[], pipe_down[];
+    private Bird bird;
 
     private int pipeX[], pipeY[];
 
     private Random random;
 
-    public Pipe(AtlasFactory atlas)
+    public Pipe(AtlasFactory atlas, Bird bird)
     {
         super(atlas);
+
+        this.bird = bird;
 
         pipe_up = new Bitmap[PIPE_NUM];
         pipe_down = new Bitmap[PIPE_NUM];
@@ -39,19 +43,37 @@ public class Pipe extends BaseWidget
         random = new Random(System.currentTimeMillis());
 
         this.loadBitmap();
+        this.init();
+    }
+
+    @Override
+    public void init()
+    {
+        for (int i = 0; i < PIPE_NUM; i++)
+        {
+            pipeX[i] = Config.PIPE_L_R_DISTANCE * (i + PIPE_NUM);
+            pipeY[i] = random.nextInt(PIPE_H_RANGE) + PIPE_MIN_H;
+        }
     }
 
     @Override
     public void play()
     {
-        for (int i = 0; i < PIPE_NUM; i++)
+        if (onCollision())
         {
-            pipeX[i] -= Config.SPEED;
-
-            if (pipeX[i] <= -pipe_up[i].getWidth())
+            bird.die();
+        }
+        if (!Status.isDead)
+        {
+            for (int i = 0; i < PIPE_NUM; i++)
             {
-                pipeX[i] = Config.PIPE_L_R_DISTANCE * PIPE_NUM - pipe_up[i].getWidth();
-                pipeY[i] = random.nextInt(PIPE_H_RANGE) + PIPE_MIN_H;
+                pipeX[i] -= Config.SPEED;
+
+                if (pipeX[i] <= -pipe_up[i].getWidth())
+                {
+                    pipeX[i] = Config.PIPE_L_R_DISTANCE * PIPE_NUM - width;
+                    pipeY[i] = random.nextInt(PIPE_H_RANGE) + PIPE_MIN_H;
+                }
             }
         }
     }
@@ -61,7 +83,7 @@ public class Pipe extends BaseWidget
     {
         for (int i = 0; i < PIPE_NUM; i++)
         {
-            canvas.drawBitmap(pipe_up[i], pipeX[i], pipeY[i] - pipe_up[i].getHeight(), paint);
+            canvas.drawBitmap(pipe_up[i], pipeX[i], pipeY[i] - height, paint);
             canvas.drawBitmap(pipe_down[i], pipeX[i], pipeY[i] + Config.PIPE_U_D_DISTANCE, paint);
         }
     }
@@ -74,8 +96,8 @@ public class Pipe extends BaseWidget
             pipe_up[i] = atlas.get("pipe_down");
             pipe_down[i] = atlas.get("pipe_up");
         }
-
-        init();
+        this.setWidth(pipe_up[0].getWidth());
+        this.setHeight(pipe_up[0].getHeight());
     }
 
     @Override
@@ -90,13 +112,17 @@ public class Pipe extends BaseWidget
         }
     }
 
-    //初始化桶的位置
-    public void init()
+    public boolean onCollision()
     {
+        Rect r = this.bird.getRect();
         for (int i = 0; i < PIPE_NUM; i++)
         {
-            pipeX[i] = Config.PIPE_L_R_DISTANCE * (i + PIPE_NUM);
-            pipeY[i] = random.nextInt(PIPE_H_RANGE) + PIPE_MIN_H;
+            if (r.intersect(pipeX[i] - width, pipeY[i] - height, pipeX[i], pipeY[i]))
+                return true;
+            if (r.intersect(pipeX[i], pipeY[i] + Config.PIPE_U_D_DISTANCE,
+                    pipeX[i] + width, pipeY[i] + Config.PIPE_U_D_DISTANCE + height))
+                return true;
         }
+        return false;
     }
 }

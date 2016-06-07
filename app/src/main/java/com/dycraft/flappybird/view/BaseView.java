@@ -2,14 +2,13 @@ package com.dycraft.flappybird.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.dycraft.flappybird.config.Config;
-import com.dycraft.flappybird.config.Constant;
+import com.dycraft.flappybird.property.Config;
+import com.dycraft.flappybird.property.Constant;
 
 /**
  * Created by Admin on 2016/6/5.

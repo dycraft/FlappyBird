@@ -3,8 +3,9 @@ package com.dycraft.flappybird.module;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.dycraft.flappybird.config.Config;
-import com.dycraft.flappybird.config.Constant;
+import com.dycraft.flappybird.property.Config;
+import com.dycraft.flappybird.property.Constant;
+import com.dycraft.flappybird.property.Status;
 import com.dycraft.flappybird.util.AtlasFactory;
 
 /**
@@ -22,19 +23,30 @@ public class Land extends BaseWidget
         super(atlas);
 
         this.loadBitmap();
+        this.init();
+    }
+
+    @Override
+    public void init()
+    {
+        setRect(LAND_POX_X, LAND_POX_Y,
+                landImage.getWidth(), landImage.getHeight());
     }
 
     @Override
     public void play()
     {
-        int bound = Constant.BG_WIDTH - landImage.getWidth();
-        if (x <= bound)
+        if (!Status.isDead)
         {
-            x = 0;
-        }
-        else
-        {
-            x -= Config.SPEED;
+            int bound = Constant.BG_WIDTH - landImage.getWidth();
+            if (x <= bound)
+            {
+                x = 0;
+            }
+            else
+            {
+                x -= Config.SPEED;
+            }
         }
     }
 
@@ -48,9 +60,6 @@ public class Land extends BaseWidget
     public void loadBitmap()
     {
         landImage = atlas.get("land");
-
-        setRect(LAND_POX_X, LAND_POX_Y,
-                landImage.getWidth(), landImage.getHeight());
     }
 
     @Override

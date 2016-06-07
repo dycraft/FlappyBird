@@ -16,10 +16,12 @@ public abstract class BaseWidget
     protected int x;
     protected int y;
 
-    protected int curFrame;
+    protected int curFrame; //帧的计数
 
     protected AtlasFactory atlas;
     protected Paint paint;
+
+    protected boolean isVisible; //可视（是否刷新绘制）
 
     public BaseWidget(AtlasFactory atlas)
     {
@@ -30,13 +32,13 @@ public abstract class BaseWidget
         //this.loadBitmap() 需自己去写
     }
 
-    //随帧运动
-    public void play()
-    {
-        curFrame++;
-    }
+    //replay的初始化
+    public abstract void init();
 
-    //绘图-Param：在主环境中绘图
+    //随帧运动
+    public abstract void play();
+
+    //绘图-Param：在主环境中绘图，需要根据Status实现
     public abstract void onDraw(Canvas canvas);
 
     //加载图片
@@ -46,6 +48,16 @@ public abstract class BaseWidget
     public abstract void recycleBitmap();
 
     //get & set 方法
+    public void setVisible(boolean isVisible)
+    {
+        this.isVisible = isVisible;
+    }
+
+    public boolean getVisible()
+    {
+        return isVisible;
+    }
+
     public void setRect(int x, int y, int w, int h)
     {
         this.x = x;

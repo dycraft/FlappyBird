@@ -3,7 +3,7 @@ package com.dycraft.flappybird.module;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.dycraft.flappybird.config.Constant;
+import com.dycraft.flappybird.property.Constant;
 import com.dycraft.flappybird.util.AtlasFactory;
 
 /**
@@ -25,6 +25,19 @@ public class Score extends BaseWidget
         numImage = new Bitmap[10];
 
         this.loadBitmap();
+        this.init();
+    }
+
+    @Override
+    public void init()
+    {
+        this.setScore(0);
+    }
+
+    @Override
+    public void play()
+    {
+
     }
 
     @Override
@@ -64,8 +77,6 @@ public class Score extends BaseWidget
                 }
                 break;
         }
-
-        updateSize();
     }
 
     @Override
