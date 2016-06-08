@@ -43,13 +43,16 @@ public class Score extends BaseWidget
     @Override
     public void onDraw(Canvas canvas)
     {
-        String s = String.valueOf(score);
-        for (int i = 0; i < s.length(); i++)
+        if (isVisible)
         {
-            //考虑1的大小和别的不一样
-            int num = Integer.parseInt(String.valueOf(s.charAt(i)));
-            canvas.drawBitmap(numImage[num],
-                    x + (i + 1) * numImage[0].getWidth() - numImage[num].getWidth(), y, paint);
+            String s = String.valueOf(score);
+            for (int i = 0; i < s.length(); i++)
+            {
+                //考虑1的大小和别的不一样
+                int num = Integer.parseInt(String.valueOf(s.charAt(i)));
+                canvas.drawBitmap(numImage[num],
+                        x + (i + 1) * numImage[0].getWidth() - numImage[num].getWidth(), y, paint);
+            }
         }
     }
 

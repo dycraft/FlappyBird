@@ -8,6 +8,7 @@ import com.dycraft.flappybird.property.Config;
 import com.dycraft.flappybird.property.Constant;
 import com.dycraft.flappybird.property.Status;
 import com.dycraft.flappybird.util.AtlasFactory;
+import com.dycraft.flappybird.util.SoundPlayer;
 
 import java.util.Random;
 
@@ -22,19 +23,22 @@ public class Pipe extends BaseWidget
     //桶露出的最少长度
     private final int PIPE_H_RANGE = Constant.LAND_H - PIPE_MIN_H * 2 - Config.PIPE_U_D_DISTANCE;
     //桶的高度可变化的范围
+    private final int BIRD_BOUND = 10;
 
     private Bitmap pipe_up[], pipe_down[];
     private Bird bird;
+    private SoundPlayer soundPlayer;
 
     private int pipeX[], pipeY[];
 
     private Random random;
 
-    public Pipe(AtlasFactory atlas, Bird bird)
+    public Pipe(AtlasFactory atlas, Bird bird, SoundPlayer soundPlayer)
     {
         super(atlas);
 
         this.bird = bird;
+        this.soundPlayer = soundPlayer;
 
         pipe_up = new Bitmap[PIPE_NUM];
         pipe_down = new Bitmap[PIPE_NUM];
@@ -59,11 +63,12 @@ public class Pipe extends BaseWidget
     @Override
     public void play()
     {
-        if (onCollision())
+        if (!Status.isDead && onCollision())
         {
+            soundPlayer.play("hit");
             bird.die();
         }
-        if (!Status.isDead)
+        if (!Status.isDead  && Status.status == Status.State.Game)
         {
             for (int i = 0; i < PIPE_NUM; i++)
             {
@@ -73,6 +78,12 @@ public class Pipe extends BaseWidget
                 {
                     pipeX[i] = Config.PIPE_L_R_DISTANCE * PIPE_NUM - width;
                     pipeY[i] = random.nextInt(PIPE_H_RANGE) + PIPE_MIN_H;
+                }
+
+                if ((bird.getX() > pipeX[i] + width/2) && (bird.getX() <= pipeX[i] + width/2 + Config.SPEED))
+                {
+                    bird.bonus();
+                    soundPlayer.play("point");
                 }
             }
         }
@@ -114,14 +125,14 @@ public class Pipe extends BaseWidget
 
     public boolean onCollision()
     {
-        Rect r = this.bird.getRect();
         for (int i = 0; i < PIPE_NUM; i++)
         {
-            if (r.intersect(pipeX[i] - width, pipeY[i] - height, pipeX[i], pipeY[i]))
-                return true;
-            if (r.intersect(pipeX[i], pipeY[i] + Config.PIPE_U_D_DISTANCE,
-                    pipeX[i] + width, pipeY[i] + Config.PIPE_U_D_DISTANCE + height))
-                return true;
+            if ((bird.x + bird.width - BIRD_BOUND > pipeX[i]) && (bird.x + BIRD_BOUND < pipeX[i] + width))
+            {
+                if ((bird.getH() + BIRD_BOUND < pipeY[i]) ||
+                        (bird.getH() - BIRD_BOUND + bird.height > pipeY[i] + Config.PIPE_U_D_DISTANCE))
+                    return true;
+            }
         }
         return false;
     }

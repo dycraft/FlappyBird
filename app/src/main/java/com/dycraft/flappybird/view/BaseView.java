@@ -13,7 +13,7 @@ import com.dycraft.flappybird.property.Constant;
 /**
  * Created by Admin on 2016/6/5.
  */
-public class BaseView extends SurfaceView implements SurfaceHolder.Callback, Runnable
+public abstract class BaseView extends SurfaceView implements SurfaceHolder.Callback, Runnable
 {
     protected Canvas canvas;
     protected Paint paint;
@@ -122,26 +122,14 @@ public class BaseView extends SurfaceView implements SurfaceHolder.Callback, Run
     }
 
     //绘制部分
-    public void draw()
-    {
-
-    }
+    public abstract void draw();
 
     //逻辑部分
-    public void logic()
-    {
-
-    }
+    public abstract void logic();
 
     //加载图片
-    public void loadBitmap()
-    {
-
-    }
+    public abstract void loadBitmap();
 
     //回收图片
-    public void recycleBitmap()
-    {
-        //todo
-    }
+    public abstract void recycleBitmap();
 }
